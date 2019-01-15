@@ -13,18 +13,18 @@ start:		mov	sp, 1000h	; 256d (PSP) + 3840d bytes
 drawline:	mov	ax, 0003	; ax=0003
 		int	33h		; Mus knappar och position
 		shr	cx, 1		; Halvera cx
-		or	bx, bx		; Žr bx=0000
+		or	bx, bx		; Är bx=0000
 		jz	nobutt		; Hoppa om ingen knapp trycks
 
-		cmp	oldbutt, bx	; Testa om knapp har „ndrats
+		cmp	oldbutt, bx	; Testa om knapp har ändrats
 		jne	draw
-		cmp	oldx, cx	; Testa om xpos har „ndrats
+		cmp	oldx, cx	; Testa om xpos har ändrats
 		jne	draw
-		cmp	oldy, dx	; Testa om ypos har „ndrats
+		cmp	oldy, dx	; Testa om ypos har ändrats
 		je	nobutt
 
 draw:		mov	al, 02
-		int	33h		; G”m musen
+		int	33h		; Göm musen
 
 		cmp	bx, 4
 		jne	ok
@@ -72,7 +72,7 @@ next2:		jmp	drawline
 
 
 quit:		mov	ax, 0002	; ax=0002
-		int	33h		; G”m musen
+		int	33h		; Göm musen
 		mov	al, 03h		; ah=00, al=03
 		int	10h		; Byt till 80x25x16
 		int	20h		; Avsluta
@@ -88,20 +88,20 @@ init		proc	near
 
 		xor	ax, ax		; ax=0000
 		int	33h		; Testa mus
-		or	ax, ax		; Žr ax=0000
+		or	ax, ax		; Är ax=0000
 		jz	aquit2		; Avsluta om mus inte finns
 
 aresize:	mov	ah, 4Ah		; ah=4Ah
 		mov	bx, 100h	; 256d (PSP) + 3840d bytes
 		push	cs
 		pop	es		; es=cs
-		int	21h		; Žndra programminne
+		int	21h		; Ändra programminne
 		jc	aquit		; Avsluta om fel
 
 aalloc:		mov	ah, 48h		; ah=48h
 		mov	bx, 4000d	; bx=4000d
 		int	21h		; Allokera 4000 paragraphs, 64000 bytes
-		jc	aquit		; Avsluta om f”r lite minne
+		jc	aquit		; Avsluta om för lite minne
 		mov	buf, ax		; Flytta pekaren till buf
 
 		mov	ax, 0013h	; ah=00, al=13
@@ -119,7 +119,7 @@ aalloc:		mov	ah, 48h		; ah=48h
 		mov	dx, offset musbuf
 		push	cs
 		pop	es
-		int	33h		; Žndra musmark”r
+		int	33h		; Ändra musmarkör
 
 		mov	al, 01		; ax=0001
 		int	33h		; Visa musen
@@ -153,7 +153,7 @@ F1		endp
 F10		proc	near
 
 		mov	ax, 0002	; ax=0002
-		int	33h		; G”m musen
+		int	33h		; Göm musen
 
 		xor	si, si
 		mov	di, si
@@ -227,19 +227,19 @@ BytesPerLine	EQU	320
 
 _Line13		PROC	near
 
-		push	bp		; spara registerinneh†ll vid anropet
+		push	bp		; spara registerinnehåll vid anropet
 		mov	bp,sp
-		sub	sp,6		; stackutrymme f”r lokala variabler
+		sub	sp,6		; stackutrymme för lokala variabler
 		push	si
 		push	di
 
-; testa om lodr„t linje
+; testa om lodrät linje
 
-		mov	si,BytesPerLine	; f”rsta y-steg
+		mov	si,BytesPerLine	; första y-steg
 
 		mov	cx,ARGx2
 		sub	cx,ARGx1	; CX := x2 - x1
-		jz	VertLine13	; hoppa om lodr„t linje
+		jz	VertLine13	; hoppa om lodrät linje
 
 ; tvinga x1 < x2
 
@@ -255,18 +255,18 @@ _Line13		PROC	near
 		xchg	bx,ARGy1
 		mov	ARGy2,bx
 
-; ber„kna dy = ABS(y2-y1)
+; beräkna dy = ABS(y2-y1)
 
 L01:		mov	bx,ARGy2
 		sub	bx,ARGy1	; BX := y2 - y1
-		jz	HorizLine13	; hoppa om v†gr„t linje
+		jz	HorizLine13	; hoppa om vågrät linje
 
 		jns	L03		; hoppa om lutningen positiv
 
 		neg	bx		; BX := y1 - y2
 		neg	si		; negera y-steg
 
-; v„lj l„mplig rutin f”r linjens lutning
+; välj lämplig rutin för linjens lutning
 
 L03:		push	si		; spara y-steg
 
@@ -276,7 +276,7 @@ L03:		push	si		; spara y-steg
 		mov	VARroutine,offset HiSlopeLine13
 		xchg	bx,cx		; skifta dy och dx
 
-; ber„kna f”rsta beslutsvariabel och steg
+; beräkna första beslutsvariabel och steg
 
 L04:		shl	bx,1		; BX := 2 * dy
 		mov	VARincr1,bx	; incr1 := 2 * dy
@@ -285,7 +285,7 @@ L04:		shl	bx,1		; BX := 2 * dy
 		sub	bx,cx
 		mov	VARincr2,bx	; incr2 := 2 * (dy - dx)
 
-; ber„kna f”rsta bildelementadress
+; beräkna första bildelementadress
 
 		push	cx		; spara detta register
 		mov	ax,ARGy1	; AX := y
@@ -294,13 +294,13 @@ L04:		shl	bx,1		; BX := 2 * dy
 
 		mov	di,bx		; ES:DI -> buffert
 
-		pop	cx		; †terst„ll detta register
+		pop	cx		; återställ detta register
 		inc	cx		; CX := antal bildelement som skall ritas
 
 		pop	bx		; BX := y-steg
-		jmp	VARroutine	; hoppa till r„tt rutin f”r lutningen
+		jmp	VARroutine	; hoppa till rätt rutin för lutningen
 
-; rutin f”r lodr„ta linjer
+; rutin för lodräta linjer
 
 VertLine13:	mov	ax,ARGy1	; AX := y1
 		mov	bx,ARGy2	; BX := y2
@@ -320,15 +320,15 @@ L31:		inc	cx		; CX := antal bildelement som skall ritas
 		mov	di,bx		; ES:DI -> videobuffert
 		dec	si		; SI := byte/rad - 1
 
-		mov	al,ARGn		; AL := bildelementv„rde
+		mov	al,ARGn		; AL := bildelementvärde
 
-L32:		stosb			; s„tt bildelementv„rdet i bufferten
-		add	di,si		; stega till n„sta rad
+L32:		stosb			; sätt bildelementvärdet i bufferten
+		add	di,si		; stega till nästa rad
 		loop	L32
 
 		jmp	Lexit
 
-; rutin f”r v†gr„ta linjer (lutningen = 0)
+; rutin för vågräta linjer (lutningen = 0)
 
 HorizLine13:
 		push	cx		; spara CX
@@ -340,19 +340,19 @@ HorizLine13:
 		pop	cx
 		inc	cx		; CX := antal bildelement som skall ritas
 
-		mov	al,ARGn		; AL := bildelementv„rde
+		mov	al,ARGn		; AL := bildelementvärde
 
 		rep	stosb		; uppdatera videobufferten
 
 		jmp	short Lexit
 
-; rutin f”r dy <= dx (lutning <= 1)	; ES:DI -> videobuffert
+; rutin för dy <= dx (lutning <= 1)	; ES:DI -> videobuffert
 					; BX = y-steg
 					; CX = antal bildel. att rita
 					; SI = beslutsvariabel
 
 LoSlopeLine13:
-		mov	al,ARGn		; AL := bildelementv„rde
+		mov	al,ARGn		; AL := bildelementvärde
 
 L11:		stosb			; lagra bildelement, stega x
 
@@ -368,14 +368,14 @@ L12:		add	si,VARincr2	; d := d + incr2
 		loop	L11
 		jmp	short Lexit
 
-; rutin f”r dy > dx (lutning > 1)	; ES:DI -> videobuffert
+; rutin för dy > dx (lutning > 1)	; ES:DI -> videobuffert
 					; BX := y-steg
 					; CX := antal bildel. att rita
 					; SI := beslutsvariabel
 HiSlopeLine13:
-		mov	al,ARGn		; AL := bildelementv„rde
+		mov	al,ARGn		; AL := bildelementvärde
 
-L21:		stosb			; uppdatera n„sta bildelement, stega x
+L21:		stosb			; uppdatera nästa bildelement, stega x
 
 		add	di,bx		; stega y
 
@@ -391,7 +391,7 @@ L22:		or	si,si		; testa tecknet hos d
 L23:		add	si,VARincr2	; d := d + incr2
 		loop	L21
 
-Lexit:		pop	di		; †terst„ll registerinneh†ll
+Lexit:		pop	di		; återställ registerinnehåll
 		pop	si
 		mov	sp,bp
 		pop	bp
@@ -401,7 +401,7 @@ _Line13		ENDP
 
 ;***********************************************************
 
-OriginOffset	EQU	0		; offset i byte f”r (0,0)
+OriginOffset	EQU	0		; offset i byte för (0,0)
 VideoBufferSeg	EQU	0A000h
 
 PixelAddr13	PROC	near
@@ -414,7 +414,7 @@ PixelAddr13	PROC	near
 
 		add	bx,OriginOffset	; BX := offset i byte i videobufferten
 		mov	ax,VideoBufferSeg
-		mov	es,ax		; ES:BX := adress i byte f”r bildelementet
+		mov	es,ax		; ES:BX := adress i byte för bildelementet
 		ret
 
 PixelAddr13	ENDP
@@ -499,41 +499,41 @@ Bsquared	EQU	word ptr [bp-32]
 TwoAsquared	EQU	word ptr [bp-36]
 TwoBsquared	EQU	word ptr [bp-40]
 
-RMWbits		EQU	0		; bitar f”r l„s-modifiera-skriv
+RMWbits		EQU	0		; bitar för läs-modifiera-skriv
 ;BytesPerLine	EQU	80
 
 _Ellipse10	PROC	near
 
-		push	bp		; spara registerinneh†ll vid anropet
+		push	bp		; spara registerinnehåll vid anropet
 		mov	bp,sp
-		sub	sp,40		; s„tt upp stackramen
+		sub	sp,40		; sätt upp stackramen
 		push	si
 		push	di
 
-; s„tt grafikl„gesregistret i grafikstyrenheten
+; sätt grafiklägesregistret i grafikstyrenheten
 
-		mov	dx,3CEh		; DX := port f”r grafikstyrenheten
-		mov	ax,0005h	; AL := nummer p† grafikl„geregistret
-					; AH := Skrivl„ge 0 (bitarna 0,1)
-		out	dx,ax		;	L„sl„ge 0 (bit 4)
+		mov	dx,3CEh		; DX := port för grafikstyrenheten
+		mov	ax,0005h	; AL := nummer på grafiklägeregistret
+					; AH := Skrivläge 0 (bitarna 0,1)
+		out	dx,ax		;	Läsläge 0 (bit 4)
 
-; s„tt registret Data Rotate/Function Select
+; sätt registret Data Rotate/Function Select
 
-		mov	ah,RMWbits	; AH := bitar f”r l„s-modifiera-skriv
+		mov	ah,RMWbits	; AH := bitar för läs-modifiera-skriv
 		mov	al,3		; AL := reg Data Rotate/Function Select
 		out	dx,ax
 
-; s„tt registren Set/Reset och Enable Set/Reset
+; sätt registren Set/Reset och Enable Set/Reset
 
-		mov	ah, ARGn	; AH := bildelementv„rde
-		mov	al,0		; AL := nummer p† reg Set/Reset
+		mov	ah, ARGn	; AH := bildelementvärde
+		mov	al,0		; AL := nummer på reg Set/Reset
 		out	dx,ax
 
-		mov	ax,0F01h	; AH := v„rde f”r Enable Set/Reset (alla
+		mov	ax,0F01h	; AH := värde för Enable Set/Reset (alla
 					;  bitplan aktiverade)
-		out	dx,ax		; AL := nummer p† reg Enable Set/Reset
+		out	dx,ax		; AL := nummer på reg Enable Set/Reset
 
-; s„tt upp konstanterna
+; sätt upp konstanterna
 
 		mov	ax,ARGa
 		mul	ax
@@ -553,10 +553,10 @@ _Ellipse10	PROC	near
 		mov	TwoBsquared,ax
 		mov	TwoBsquared+2,dx ; 2*b^2
 
-; startv„rde f”r adress i bufferten och bitmask
+; startvärde för adress i bufferten och bitmask
 
-		mov	ax,BytesPerLine	; AX := radl„ngd i videobufferten
-		mul	ARGb		; AX := relativ offset i byte f”r b
+		mov	ax,BytesPerLine	; AX := radlängd i videobufferten
+		mul	ARGb		; AX := relativ offset i byte för b
 		mov	si,ax
 		mov	di,ax
 
@@ -564,20 +564,20 @@ _Ellipse10	PROC	near
 		mov	bx,ARGxc	; BX := xc
 		call	PixelAddr10	; AH := bitmask
 					; ES:BX -> buffert
-					; CL := antal bitar v„nsterskift
+					; CL := antal bitar vänsterskift
 		mov	ah,1
-		shl	ah,cl		; AH := bitmask f”r f”rsta bildelement
+		shl	ah,cl		; AH := bitmask för första bildelement
 		mov	LMask,ah
 		mov	RMask,ah
 
-		add	si,bx		; SI := offset f”r (0,b)
+		add	si,bx		; SI := offset för (0,b)
 		mov	ULAddr,si
 		mov	URAddr,si
-		sub	bx,di		; AX := offset f”r (0,-b)
+		sub	bx,di		; AX := offset för (0,-b)
 		mov	LLAddr,bx
 		mov	LRAddr,bx
 
-; startv„rde f”r beslutsvariabeler
+; startvärde för beslutsvariabeler
 
 		xor	ax,ax
 		mov	VARdx,ax
@@ -586,7 +586,7 @@ _Ellipse10	PROC	near
 		mov	ax,TwoAsquared
 		mov	dx,TwoAsquared+2
 		mov	cx,ARGb
-		call	LongMultiply	; g”r 32-bitars g†nger 16-bitars multiplikation
+		call	LongMultiply	; gör 32-bitars gånger 16-bitars multiplikation
 		mov	VARdy,ax
 		mov	VARdy+2,dx	; dy = TwoAsquared * b
 
@@ -609,12 +609,12 @@ _Ellipse10	PROC	near
 		sub	VARd,ax
 		sbb	VARd+2,dx	; d = Bsquared - Asquared*b + Asquared/4
 
-; g† runt tills dy/dx >= -1
+; gå runt tills dy/dx >= -1
 
-		mov	bx,ARGb		; BX := startv„rde f”r y-koordinat
+		mov	bx,ARGb		; BX := startvärde för y-koordinat
 
-		xor	cx,cx		; CH := 0 (f”rsta y-steg)
-					; CL := 0 (f”rsta x-steg)
+		xor	cx,cx		; CH := 0 (första y-steg)
+					; CL := 0 (första x-steg)
 eL10:		mov	ax,VARdx
 		mov	dx,VARdx+2
 
@@ -657,10 +657,10 @@ eL11:		mov	ax,VARdx
 		jmp	eL10
 
 ;
-; rita bildelement fr†n aktuella (x,y) tills y < 0
+; rita bildelement från aktuella (x,y) tills y < 0
 ;
 
-; startv„rde f”r buffertadress och bitmask
+; startvärde för buffertadress och bitmask
 
 eL20:		push	bx		; spara aktuell y-koordinat
 		push	cx		; spara x- och y-steg
@@ -689,7 +689,7 @@ eL20:		push	bx		; spara aktuell y-koordinat
 		add	VARd,ax
 		adc	VARd+2,dx	; uppdatera d
 
-; g† runt tills y < 0
+; gå runt tills y < 0
 
 		pop	cx		; CH,CL := y- och x-steg
 		pop	bx		; BX := y
@@ -726,21 +726,21 @@ eL22:		mov	ax,VARdy
 		sbb	VARd+2,dx	; d += Asquared - dy
 
 		dec	bx		; minska y
-		jns	eL21		; g† runt om >= 0
+		jns	eL21		; gå runt om >= 0
 
-; †terst„ll standardv„rden f”r register i grafikstyrenheten
+; återställ standardvärden för register i grafikstyrenheten
 
-eLexit:		mov	ax,0FF08h	; standardv„rde f”r bitmaskreg
+eLexit:		mov	ax,0FF08h	; standardvärde för bitmaskreg
 		mov	dx,3CEh
 		out	dx,ax
 
-		mov	ax,0003		; standardv„rde f”r Function Select
+		mov	ax,0003		; standardvärde för Function Select
 		out	dx,ax
 
-		mov	ax,0001		; standardv„rde f”r Enable Set/Reset
+		mov	ax,0001		; standardvärde för Enable Set/Reset
 		out	dx,ax
 
-		pop	di		; †terst„ll register och hoppa tillbaka
+		pop	di		; återställ register och hoppa tillbaka
 		pop	si
 		mov	sp,bp
 		pop	bp
@@ -757,7 +757,7 @@ Set4Pixels	PROC	near		; Anropa med: CH := y-steg (0, -1)
 		push	bx
 		push	dx
 
-		mov	dx,3CEh		; DX := port f”r grafikstyrenheten
+		mov	dx,3CEh		; DX := port för grafikstyrenheten
 
 		xor	bx,bx		; BX := 0
 		test	ch,ch
@@ -766,23 +766,23 @@ Set4Pixels	PROC	near		; Anropa med: CH := y-steg (0, -1)
 		mov	bx,BytesPerLine	; BX := positivt steg
 		neg	bx		; BX := negativt steg
 
-eL30:		mov	al,8		; AL := nummer p† bitmaskreg
+eL30:		mov	al,8		; AL := nummer på bitmaskreg
 
 ; bildelement i (cx-y,yc+y) och (xc-x,yc-y)
 
 		xor	si,si		; SI := 0
 		mov	ah,LMask
 
-		rol	ah,cl		; AH := bitmask roterad v†gr„tt
+		rol	ah,cl		; AH := bitmask roterad vågrätt
 		rcl	si,1		; SI := 1 om bitmasken roterad ett varv
 		neg	si		; SI := 0 eller -1
 
-		mov	di,si		; SI,DI := steg v†gr„tt v„nster
+		mov	di,si		; SI,DI := steg vågrätt vänster
 
-		add	si,ULAddr	; SI := ”vre v„nster adr + v†gr„tt steg
-		add	si,bx		; SI := nya ”vre v„nster adr
+		add	si,ULAddr	; SI := övre vänster adr + vågrätt steg
+		add	si,bx		; SI := nya övre vänster adr
 		add	di,LLAddr
-		sub	di,bx		; DI := nya nedre v„nster adr
+		sub	di,bx		; DI := nya nedre vänster adr
 
 		mov	LMask,ah	; uppdatera dessa variabler
 		mov	ULAddr,si
@@ -790,9 +790,9 @@ eL30:		mov	al,8		; AL := nummer p† bitmaskreg
 
 		out	dx,ax		; uppdatera bitmaskregistret
 
-		mov	ch,es:[si]	; uppdatera ”vre v„nster bildelement
+		mov	ch,es:[si]	; uppdatera övre vänster bildelement
 		mov	es:[si],ch
-		mov	ch,es:[di]	; uppdatera nedre v„nster bildelement
+		mov	ch,es:[di]	; uppdatera nedre vänster bildelement
 		mov	es:[di],ch
 
 ; bildelement i (xc+x,yc+y) och (xc+x,yc-y)
@@ -800,15 +800,15 @@ eL30:		mov	al,8		; AL := nummer p† bitmaskreg
 		xor	si,si		; SI := 0
 		mov	ah,RMask
 
-		ror	ah,cl		; AH := bitmask roterad v†gr„tt
+		ror	ah,cl		; AH := bitmask roterad vågrätt
 		rcl	si,1		; SI := 1 om bitmask roterad ett varv
 
-		mov	di,si		; SI,DI := steg h”ger v†gr„tt
+		mov	di,si		; SI,DI := steg höger vågrätt
 
-		add	si,URAddr	; SI := ”vre h”gra adr + v†gr„tt steg
-		add	si,bx		; SI := nya ”vre h”ger adr
+		add	si,URAddr	; SI := övre högra adr + vågrätt steg
+		add	si,bx		; SI := nya övre höger adr
 		add	di,LRAddr
-		sub	di,bx		; DI := nya nedre h”ger adr
+		sub	di,bx		; DI := nya nedre höger adr
 
 		mov	RMask,ah	; uppdatera dessa variabler
 		mov	URAddr,si
@@ -816,12 +816,12 @@ eL30:		mov	al,8		; AL := nummer p† bitmaskreg
 
 		out	dx,ax		; uppdatera bitmaskregistret
 
-		mov	ch,es:[si]	; uppdatera ”vre h”ger bildelement
+		mov	ch,es:[si]	; uppdatera övre höger bildelement
 		mov	es:[si],ch
-		mov	ch,es:[di]	; uppdatera nedre h”ger bildelement
+		mov	ch,es:[di]	; uppdatera nedre höger bildelement
 		mov	es:[di],ch
 
-		pop	dx		; †terst„ll dessa reg
+		pop	dx		; återställ dessa reg
 		pop	bx
 		pop	ax
 		ret
@@ -830,19 +830,19 @@ Set4Pixels	ENDP
 
 ;***********************************************************
 
-LongMultiply	PROC	near		; Anropas med: DX = ul (h”ga ordet
+LongMultiply	PROC	near		; Anropas med: DX = ul (höga ordet
 					;		av 32-bitars tal)
-					;		AX = u2 (l†ga ordet)
+					;		AX = u2 (låga ordet)
 					;		CX = vl (16-bitars tal)
-					; Returv„rde:	DX:AX = 32-bitars resultat
+					; Returvärde:	DX:AX = 32-bitars resultat
 		push	ax		; spara u2
 		mov	ax,dx		; AX := ul
-		mul	cx		; AX := h”ga ordet i resultatet
+		mul	cx		; AX := höga ordet i resultatet
 		xchg	ax,cx		; AX := vl
 		pop	dx		; DX := u2
-		mul	dx		; AX := l†ga ordet i resultatet
+		mul	dx		; AX := låga ordet i resultatet
 					; DX := minnessiffra
-		add	dx,cx		; CX := h”ga ordet i resultatet
+		add	dx,cx		; CX := höga ordet i resultatet
 		ret
 
 LongMultiply	ENDP
@@ -850,12 +850,12 @@ LongMultiply	ENDP
 ;***********************************************************
 
 ;BytesPerLine	EQU	80		; antal byte i en horisontell linje
-OriginOffset	EQU	0		; offset i byte f”r (0,0)
+OriginOffset	EQU	0		; offset i byte för (0,0)
 VideoBuffertSeg	EQU	0A000h
 
 PixelAddr10	PROC	near
 
-		mov	cl, bl		; CL = l†ga byte hos x
+		mov	cl, bl		; CL = låga byte hos x
 		push	dx		; spara dx
 		mov	dx,BytesPerLine	; AX = y * BytesPerLine
 		mul	dx
@@ -866,9 +866,9 @@ PixelAddr10	PROC	near
 		add	bx,ax		; BX = y*BytesPerLine + x/8
 		add	bx,OriginOffset	; BX = offset i byte i bildelement
 		mov	ax,VideoBuffertSeg
-		mov	es,ax		; ES:BX = adress i byte f”r bildelementet
+		mov	es,ax		; ES:BX = adress i byte för bildelementet
 		and	cl,7		; CL = x & 7
-		xor	cl,7		; CL = antal bitar v„nsterskift
+		xor	cl,7		; CL = antal bitar vänsterskift
 		mov	ah,1		; AH = oskiftad bitmask
 		ret
 
